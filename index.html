@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>OIDC in GR - Identity Server</title>
+    <style>
+      body {
+        --body-font: "Segoe UI", sans-serif;
+        --header-font: "Segoe UI Light", sans-serif;
+        font-family: var(--body-font);
+        counter-reset: important-counter;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: var(--header-font);
+        font-weight: lighter;
+      }
+
+      pre,
+      code,
+      .remark-code,
+      .remark-inline-code {
+        font-family: Consolas, monospace;
+      }
+
+      a,
+      a:visited {
+        color: #2980b9;
+      }
+
+      img {
+        max-width: 100%;
+      }
+
+      table {
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 0.2em 0.4em;
+      }
+
+      th,
+      tr:not(:last-child) td {
+        border-bottom: 1px solid #bbb;
+      }
+
+      p:first-child {
+        margin-top: 0;
+      }
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      .float-left {
+        float: left;
+      }
+
+      .float-right {
+        float: right;
+      }
+
+      .center {
+        display: flex;
+        align-items: center;
+      }
+
+      .remark-code {
+        display: block;
+        padding: 0.5em;
+      }
+
+      .remark-slide-content h1 {
+        font-size: 45px;
+      }
+
+      .remark-slide-content::after {
+        position: absolute;
+        content: " ";
+        width: 45px;
+        height: 45px;
+        opacity: 0.4;
+        top: 600px;
+        right: 20px;
+        background-image: url("gr-grey.png");
+        background-size: contain;
+      }
+
+      .bold {
+        background-color: #000000;
+        color: white;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .bold-magnolia {
+        background-color: #fffae0;
+        color: white;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .bold li {
+        text-align: left;
+      }
+
+      .key-lesson {
+        background-color: #f1c40f;
+        font-family: var(--header-font);
+        font-size: 45px;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .key-lesson::before {
+        display: block;
+        font-family: var(--body-font);
+        content: "Key lesson";
+        margin-bottom: 1rem;
+      }
+
+      .title {
+        background-color: rgb(0, 168, 225);
+        color: white;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .muted {
+        opacity: 0.6;
+      }
+
+      .success {
+        color: #27ae60;
+      }
+
+      .error {
+        border-radius: 8px;
+        color: #c0392b;
+        border: solid 2px;
+        padding: 0.5em;
+      }
+
+      hr {
+        border: none;
+        border-top: dashed 2px hsla(0, 0%, 74%, 1);
+        clear: both;
+      }
+
+      pre {
+        white-space: pre-wrap;
+      }
+
+      .important::before,
+      .hindsight::before {
+        position: absolute;
+        border-radius: 10px 0 0 10px;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        padding: 1rem;
+      }
+
+      .important::before {
+        counter-increment: important-counter;
+        background-color: #ffe066;
+        content: counter(important-counter) ".";
+      }
+
+      .hindsight::before {
+        background-color: #6c5ce7;
+        content: "👓";
+      }
+
+      .important,
+      .hindsight {
+        position: relative;
+        border-radius: 10px;
+        padding: 1rem 1rem 1rem 4.3rem;
+      }
+
+      .important {
+        background-color: #fff9db;
+      }
+
+      .hindsight {
+        background-color: hsl(244, 98%, 90%);
+      }
+
+      .remark-slide-content > div {
+        margin: 1em 0;
+      }
+
+      .remark-slide-content > div > :first-child {
+        margin-top: 0;
+      }
+
+      .remark-slide-content > div > :last-child {
+        margin-bottom: 0;
+      }
+
+      li {
+        padding: 0.5em 0;
+      }
+
+      li > p {
+        margin-bottom: 0;
+      }
+
+      li > :first-child {
+        margin-top: 0;
+      }
+
+      li > :last-child {
+        margin-bottom: 0;
+      }
+
+      .agenda {
+        font-size: 1.6rem;
+      }
+
+      .agenda li {
+        opacity: 0.3;
+      }
+
+      .agenda li:nth-child(1) {
+        opacity: 1;
+      }
+
+      .agenda-1 li:nth-child(1),
+      .agenda-2 li:nth-child(1),
+      .agenda-3 li:nth-child(1),
+      .agenda-4 li:nth-child(1),
+      .agenda-5 li:nth-child(1),
+      .agenda-6 li:nth-child(1),
+      .agenda-7 li:nth-child(1),
+      .agenda-8 li:nth-child(1){
+        opacity: 0.3;
+      }
+
+      .agenda-2 li:nth-child(2) {
+        opacity: 1;
+      }
+
+      .agenda-3 li:nth-child(3) {
+        opacity: 1;
+      }
+
+      .agenda-4 li:nth-child(4) {
+        opacity: 1;
+      }
+
+      .agenda-5 li:nth-child(5) {
+        opacity: 1;
+      }
+
+      .agenda-6 li:nth-child(6) {
+        opacity: 1;
+      }
+
+      .agenda-7 li:nth-child(7) {
+        opacity: 1;
+      }
+
+      .agenda-8 li:nth-child(8) {
+        opacity: 1;
+      }
+
+      .right-image {
+        float: right;
+        margin: 0 0 0 2em !important;
+        width: 40%;
+      }
+
+      .right-image img {
+        width: 100%;
+      }
+
+      .merged + .merged > pre {
+        margin-top: -1.45em;
+      }
+
+      .merged + .merged > pre > .remark-code {
+        padding-top: 0 !important;
+        margin-top: -1.5em;
+      }
+
+      .remark-slide-number {
+        position: inherit;
+      }
+
+      .remark-slide-number .progress-bar-container {
+        position: absolute;
+        bottom: 1px;
+        height: 3px;
+        display: block;
+        left: 0;
+        right: 0;
+      }
+
+      .remark-slide-number .progress-bar {
+        height: 100%;
+        background-color: black;
+      }
+
+      .half-width {
+        width: 50%;
+      }
+
+      .abs-right {
+        position: absolute;
+        right: 0;
+      }
+
+      .slide-count {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="./remark-latest.min.js"></script>
+    <script>
+      var slideshow = remark.create({
+        sourceUrl: "./slides.md",
+        countIncrementalSlides: false,
+        highlightStyle: "rainbow",
+        slideNumberFormat: (current, total) => `
+        <div class="slide-count">
+          #${current}
+        </div>
+
+        <div class="progress-bar-container" title="${current} / ${total}">
+          <div class="progress-bar" style="width: ${(current / total) * 100}%">
+          </div>
+        </div>
+      `
+      });
+    </script>
+  </body>
+</html>
