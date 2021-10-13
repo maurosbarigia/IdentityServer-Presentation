@@ -6,7 +6,7 @@ class: title
 
 - Press C to clone the screen
 - Press P for "presenter mode" 
-- Audience: C3 Conference
+- Audience: CNCF meetup Conference
 - Duration: 25m
 
 ---
@@ -113,12 +113,8 @@ Centralised security
 Linux services need a keytab. They need to be stored somewhere.
 This is conceptually equivalent to store username/password pairs somewhere.
 
-Communication between Uberit and C3 would require domain trust between the two Active Directory instances
-This is against the company view of splitting “the platform” from “the company”.
-One of the requirements was to consider Uberit AD as "compromised" and build everything new on top of a clean and secure AD in C3.
-
 This is against the industry trend and what the rest of the world is doing
-C3 should be an opportunity to “move forward” – and OIDC is the direction to go
+The migration should be an opportunity to “move forward” – and OIDC is the direction to go
 
 ---
 
